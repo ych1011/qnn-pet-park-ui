@@ -5,6 +5,7 @@ import { ElMessage } from 'element-plus'
 import type { Student, ScoreRule, ScoreType, AddScoreResponse } from '@/types/api'
 import { useClassStore } from '@/stores/class'
 import { getRuleList, addScore, undoScore } from '@/api/teacher'
+import { getPetImage, getLevelName, getLevelColor } from '@/utils/pet'
 
 const router = useRouter()
 const classStore = useClassStore()
@@ -34,30 +35,6 @@ function selectRule(rule: ScoreRule) {
 }
 
 const hasClass = computed(() => !!classStore.currentClass)
-
-// ============ 宠物等级辅助 ============
-const levelNames = ['', '蛋', '幼崽', '成长', '成熟', '传说']
-const levelColors = ['', '#909399', '#e6a23c', '#67c23a', '#409eff', '#f56c6c']
-
-function getLevelName(level: number): string {
-  return levelNames[level] ?? '未知'
-}
-function getLevelColor(level: number): string {
-  return levelColors[level] ?? '#909399'
-}
-
-// 宠物类型 emoji（PRD 5.5 六种宠物）
-const petTypeEmojis: Record<string, string> = {
-  cat: '🐱',
-  dog: '🐶',
-  rabbit: '🐰',
-  panda: '🐼',
-  penguin: '🐧',
-  dragon: '🐲',
-}
-function getPetEmoji(code?: string): string {
-  return petTypeEmojis[code ?? ''] ?? '🐾'
-}
 
 // ============ 加减分操作 ============
 const scoring = ref(false)
@@ -365,7 +342,7 @@ onUnmounted(() => {
             :style="{ background: getLevelColor(s.pet?.currentLevel ?? 1) }"
           >
             <template v-if="s.pet">
-              <span class="pet-emoji">{{ getPetEmoji(s.pet.petType?.code) }}</span>
+              <img :src="getPetImage(s.pet.petType?.code, s.pet.currentLevel)" class="pet-emoji pet-anim-wobble" alt="宠物" />
             </template>
             <template v-else>
               <span class="pet-emoji unassigned">🐾</span>
@@ -540,7 +517,9 @@ onUnmounted(() => {
 }
 
 .pet-emoji {
-  font-size: 28px;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
 }
 
 .pet-emoji.unassigned {

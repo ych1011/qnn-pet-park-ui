@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import type { DisplayStudent } from '@/types/api'
 import { getDisplayData } from '@/api/teacher'
+import { getPetImage, getLevelName, getLevelColor } from '@/utils/pet'
 
 const route = useRoute()
 const classId = Number(route.params.classId)
@@ -19,29 +20,6 @@ const levelUpSet = ref<Set<number>>(new Set())
 
 // 上一轮等级快照（用于检测升级）
 const levelSnapshot = ref<Map<number, number>>(new Map())
-
-// ============ 宠物辅助 ============
-const petTypeEmojis: Record<string, string> = {
-  cat: '🐱',
-  dog: '🐶',
-  rabbit: '🐰',
-  panda: '🐼',
-  penguin: '🐧',
-  dragon: '🐲',
-}
-
-const levelColors = ['', '#909399', '#e6a23c', '#67c23a', '#409eff', '#f56c6c']
-const levelNames = ['', '蛋', '幼崽', '成长', '成熟', '传说']
-
-function getEmoji(code: string): string {
-  return petTypeEmojis[code] ?? '🐾'
-}
-function getLevelColor(level: number): string {
-  return levelColors[level] ?? '#909399'
-}
-function getLevelName(level: number): string {
-  return levelNames[level] ?? '未知'
-}
 
 // ============ 数据加载 ============
 async function fetchData() {
@@ -149,7 +127,7 @@ function toggleFullscreen() {
       >
         <!-- 宠物形象 -->
         <div class="card-avatar" :style="{ background: getLevelColor(s.currentLevel) }">
-          <span class="card-emoji">{{ getEmoji(s.petTypeCode) }}</span>
+          <img :src="getPetImage(s.petTypeCode, s.currentLevel)" class="card-emoji pet-anim-large" alt="宠物" />
         </div>
 
         <!-- 学生姓名 -->
@@ -263,7 +241,9 @@ function toggleFullscreen() {
 }
 
 .card-emoji {
-  font-size: 56px;
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
 }
 
 /* 学生名 */

@@ -19,6 +19,7 @@ import {
   updatePet,
   getScoreLogs,
 } from '@/api/teacher'
+import { getPetImage, getLevelName, getLevelColor, getPetEmoji } from '@/utils/pet'
 
 const route = useRoute()
 const router = useRouter()
@@ -73,30 +74,7 @@ async function handleRename() {
 const pet = ref<Pet | null>(null)
 const petLoading = ref(false)
 
-// 宠物等级名称（PRD 5.5）
-const levelNames = ['', '蛋', '幼崽', '成长', '成熟', '传说']
-const levelColors = ['', '#909399', '#e6a23c', '#67c23a', '#409eff', '#f56c6c']
-
-function getLevelName(level: number): string {
-  return levelNames[level] ?? '未知'
-}
-function getLevelColor(level: number): string {
-  return levelColors[level] ?? '#909399'
-}
-
-// 宠物类型 emoji 占位（PRD 5.5 六种宠物，图片素材由后端提供）
-const petTypeEmojis: Record<string, string> = {
-  cat: '🐱',
-  dog: '🐶',
-  rabbit: '🐰',
-  panda: '🐼',
-  penguin: '🐧',
-  dragon: '🐲',
-}
-
-function getPetEmoji(code?: string): string {
-  return petTypeEmojis[code ?? ''] ?? '🐾'
-}
+// 宠物辅助函数来自 @/utils/pet（getPetImage, getLevelName, getLevelColor, getPetEmoji）
 
 // 分配 / 更换宠物弹窗
 const petDialogVisible = ref(false)
@@ -321,7 +299,7 @@ onMounted(init)
           <template v-if="pet">
             <div class="pet-display">
               <div class="pet-avatar-large" :style="{ background: getLevelColor(pet.currentLevel) }">
-                <span class="pet-emoji-large">{{ getPetEmoji(pet.petType?.code) }}</span>
+                <img :src="getPetImage(pet.petType?.code, pet.currentLevel)" class="pet-emoji-large pet-anim-wobble" alt="宠物" />
               </div>
               <div class="pet-detail">
                 <div class="pet-custom-name">
@@ -471,7 +449,7 @@ onMounted(init)
             :class="{ active: selectedPetTypeId === t.id }"
             @click="selectedPetTypeId = t.id"
           >
-            <div class="pet-type-emoji">{{ getPetEmoji(t.code) }}</div>
+            <img :src="getPetImage(t.code, 1)" class="pet-type-emoji pet-anim" alt="宠物" />
             <div class="pet-type-name-text">{{ t.name }}</div>
           </div>
         </div>
@@ -609,7 +587,9 @@ onMounted(init)
 }
 
 .pet-emoji-large {
-  font-size: 48px;
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
 }
 
 .pet-detail {
@@ -726,7 +706,9 @@ onMounted(init)
 }
 
 .pet-type-emoji {
-  font-size: 36px;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
 }
 
 .pet-type-name-text {

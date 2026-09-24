@@ -5,6 +5,7 @@ import { ElMessage } from 'element-plus'
 import type { RankingItem, ScoreLog } from '@/types/api'
 import { useClassStore } from '@/stores/class'
 import { getRanking, getScoreLogs } from '@/api/teacher'
+import { getPetImage, getLevelColor } from '@/utils/pet'
 
 const router = useRouter()
 const classStore = useClassStore()
@@ -19,18 +20,7 @@ const hasClass = computed(() => !!classStore.currentClass)
 const top3 = computed(() => ranking.value.slice(0, 3))
 const restList = computed(() => ranking.value.slice(3))
 
-// 宠物辅助
-const petTypeEmojis: Record<string, string> = {
-  cat: '🐱', dog: '🐶', rabbit: '🐰', panda: '🐼', penguin: '🐧', dragon: '🐲',
-}
-function getEmoji(code: string): string {
-  return petTypeEmojis[code] ?? '🐾'
-}
-
-const levelColors = ['', '#909399', '#e6a23c', '#67c23a', '#409eff', '#f56c6c']
-function getLevelColor(level: number): string {
-  return levelColors[level] ?? '#909399'
-}
+// 宠物辅助函数来自 @/utils/pet
 
 // 前三名样式
 const podiumStyles = [
@@ -149,7 +139,7 @@ function goDetail(studentId: number) {
                 class="podium-avatar"
                 :style="{ background: getLevelColor(item.currentLevel) }"
               >
-                <span class="podium-emoji">{{ getEmoji(item.petTypeCode) }}</span>
+                <img :src="getPetImage(item.petTypeCode, item.currentLevel)" class="podium-emoji pet-anim-wobble" alt="宠物" />
               </div>
               <div class="podium-name">{{ item.studentName }}</div>
               <div class="podium-pet">{{ item.customName || item.petTypeName || '宠物' }}</div>
@@ -182,7 +172,7 @@ function goDetail(studentId: number) {
               </el-table-column>
               <el-table-column label="宠物" width="70" align="center">
                 <template #default="{ row }">
-                  <span class="table-emoji">{{ getEmoji(row.petTypeCode) }}</span>
+                  <img :src="getPetImage(row.petTypeCode, row.currentLevel)" class="table-emoji pet-anim" alt="宠物" />
                 </template>
               </el-table-column>
               <el-table-column label="学生" prop="studentName" min-width="120" />
@@ -330,7 +320,9 @@ function goDetail(studentId: number) {
 }
 
 .podium-emoji {
-  font-size: 36px;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
 }
 
 .podium-name {
@@ -391,7 +383,9 @@ function goDetail(studentId: number) {
 }
 
 .table-emoji {
-  font-size: 24px;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
 }
 
 .score-num {

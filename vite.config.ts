@@ -38,11 +38,6 @@ export default defineConfig({
         target: 'http://localhost:8080',
         changeOrigin: true,
       },
-      // 宠物图片等静态资源代理（生产环境由 Nginx 提供）
-      '/images': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
-      },
     },
   },
 })

@@ -5,6 +5,7 @@ import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'elem
 import type { Student, CreateStudentRequest } from '@/types/api'
 import { useClassStore } from '@/stores/class'
 import { getStudentList, createStudent, updateStudent, deleteStudent } from '@/api/teacher'
+import { getPetImage, getLevelName, getLevelColor } from '@/utils/pet'
 
 const router = useRouter()
 const classStore = useClassStore()
@@ -139,16 +140,7 @@ function goDetail(row: Student) {
 }
 
 // ============ 宠物等级名称（PRD 5.5） ============
-const levelNames = ['', '蛋', '幼崽', '成长', '成熟', '传说']
-const levelColors = ['', '#909399', '#e6a23c', '#67c23a', '#409eff', '#f56c6c']
-
-function getLevelName(level: number): string {
-  return levelNames[level] ?? '未知'
-}
-
-function getLevelColor(level: number): string {
-  return levelColors[level] ?? '#909399'
-}
+// 等级辅助函数来自 @/utils/pet
 </script>
 
 <template>
@@ -212,7 +204,7 @@ function getLevelColor(level: number): string {
           <div class="card-body">
             <template v-if="student.pet">
               <div class="pet-avatar" :style="{ background: getLevelColor(student.pet.currentLevel) }">
-                <span class="pet-emoji">🐾</span>
+                <img :src="getPetImage(student.pet.petType?.code, student.pet.currentLevel)" class="pet-emoji pet-anim" alt="宠物" />
               </div>
               <div class="pet-info">
                 <div class="pet-name">
@@ -379,7 +371,9 @@ function getLevelColor(level: number): string {
 }
 
 .pet-emoji {
-  font-size: 24px;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
 }
 
 .pet-info {

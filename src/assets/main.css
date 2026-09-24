@@ -25,3 +25,48 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+/* ============ 宠物图片动画 ============ */
+/* 持续上下浮动，模拟呼吸/活感 */
+@keyframes petFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-4px) scale(1.03); }
+}
+
+/* 轻微左右摇摆，更俏皮 */
+@keyframes petWobble {
+  0%, 100% { transform: rotate(-2deg) translateY(0); }
+  25% { transform: rotate(2deg) translateY(-2px); }
+  50% { transform: rotate(-1deg) translateY(-4px); }
+  75% { transform: rotate(1deg) translateY(-2px); }
+}
+
+/* 升级时脉冲闪光 */
+@keyframes petPulse {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.15); filter: brightness(1.4); }
+}
+
+/* 大屏专用：更大幅度浮动 */
+@keyframes petFloatLarge {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.05); }
+}
+
+/* 通用动画 class，配合各页面的 img 使用 */
+.pet-anim {
+  animation: petFloat 2s ease-in-out infinite;
+}
+
+.pet-anim-wobble {
+  animation: petWobble 2.5s ease-in-out infinite;
+}
+
+.pet-anim-large {
+  animation: petFloatLarge 3s ease-in-out infinite;
+}
+
+.pet-anim-pulse {
+  animation: petPulse 0.6s ease-out;
+}
+
