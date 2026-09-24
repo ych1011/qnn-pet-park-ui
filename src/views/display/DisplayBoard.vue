@@ -78,13 +78,23 @@ function handleManualRefresh() {
 
 // 全屏切换
 const isFullscreen = ref(false)
+
+// 监听浏览器全屏状态变化（ESC 键退出时同步状态）
+function handleFullscreenChange() {
+  isFullscreen.value = !!document.fullscreenElement
+}
+onMounted(() => {
+  document.addEventListener('fullscreenchange', handleFullscreenChange)
+})
+onUnmounted(() => {
+  document.removeEventListener('fullscreenchange', handleFullscreenChange)
+})
+
 function toggleFullscreen() {
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen().catch(() => {})
-    isFullscreen.value = true
   } else {
     document.exitFullscreen().catch(() => {})
-    isFullscreen.value = false
   }
 }
 </script>

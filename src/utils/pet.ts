@@ -29,7 +29,9 @@ const levelColors = ['', '#909399', '#e6a23c', '#67c23a', '#409eff', '#f56c6c']
 export function getPetImage(petTypeCode: string | undefined | null, level: number): string {
   const code = petTypeCode ?? 'cat'
   const lv = Math.max(1, Math.min(5, level || 1))
-  return `/images/pets/${code}-${lv}.png`
+  // 企鹅使用 GIF 动画，其他用 PNG
+  const ext = code === 'penguin' ? 'gif' : 'png'
+  return `/images/pets/${code}-${lv}.${ext}`
 }
 
 /** 获取宠物类型中文名 */
